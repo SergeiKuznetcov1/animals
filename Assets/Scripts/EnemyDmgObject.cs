@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DmgObject : MonoBehaviour
+public class EnemyDmgObject : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other) {
-        other.GetComponentInParent<EnemyController>().TakeHit(50);
+        other.GetComponentInParent<ThirdPersonMovement>().TakeHit(damageAmount: 10);
     }
 
     private void OnEnable() {

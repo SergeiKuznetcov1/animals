@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ThirdPersonMovement : MonoBehaviour
 {
+    public int MaxHealth;
+    private int _currentHealth;
     public CharacterController CharacterController;
     public Transform Cam;
     public Transform DmgObject;
@@ -15,7 +17,10 @@ public class ThirdPersonMovement : MonoBehaviour
     public float JumpSpeed;
     public float _ySpeed;
     public float RotationSpeed;
-    public 
+    private bool _playerDead;
+    private void Start() {
+        _currentHealth = MaxHealth;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -67,6 +72,17 @@ public class ThirdPersonMovement : MonoBehaviour
         else {
             Cursor.lockState = CursorLockMode.None;
         }
+    }
+
+    public void TakeHit(int damageAmount) {
+        if (_playerDead == false) {
+            _currentHealth -= damageAmount;
+            if (_currentHealth <= 0) {
+                _playerDead = true;
+                Debug.Log("Player dead");
+            }
+        }
+        Debug.Log(_currentHealth);
     }
 
     public void ActivateDmgObject() {
