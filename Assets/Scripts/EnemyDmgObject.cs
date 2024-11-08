@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class EnemyDmgObject : MonoBehaviour
 {
+    public int DamageAmount;
     private void OnTriggerEnter(Collider other) {
-        other.GetComponentInParent<ThirdPersonMovement>().TakeHit(damageAmount: 10);
+        other.GetComponentInParent<ThirdPersonMovement>().TakeHit(damageAmount: DamageAmount);
     }
 
     private void OnEnable() {

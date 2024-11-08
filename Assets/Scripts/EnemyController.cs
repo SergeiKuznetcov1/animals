@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 public class EnemyController : MonoBehaviour
 {
+    public int ExpAmount;
     public GameObject EnemyDmgObject;
     public GameObject AnimalHolder;
     public GameController GameController;
@@ -24,6 +26,20 @@ public class EnemyController : MonoBehaviour
     public float InitTimeToNextAttack;
     private float _currentTimeToNextAttack;
     private bool _playerInRange;
+    public static Action<int> OnEnemyDeath;
+    private void OnEnable() {
+        AnimationEvents.OnRespawn += StopAttacking;
+    }
+    private void OnDisable() {
+        AnimationEvents.OnRespawn -= StopAttacking;
+    }
+
+    private void StopAttacking()
+    {
+        _playerInRange = false;
+        Animator.ResetTrigger("Attack");
+    }
+
     private void Start() {
         CurrentHealthPoints = MaxHealthPoints;
         HpFillSprite.fillAmount = 1;
@@ -31,6 +47,7 @@ public class EnemyController : MonoBehaviour
     }
 
     private void Update() {
+        // Если игрок в рейндже бьём его
         if (_playerInRange == true && _currentTimeToNextAttack <= 0) {
             DoAttackAnim();
             _currentTimeToNextAttack = InitTimeToNextAttack;
@@ -42,7 +59,7 @@ public class EnemyController : MonoBehaviour
     }
 
     private void OnTriggerStay(Collider other) {
-
+        // Поворачиваемся к игроку если он в рейндже
         if (other.gameObject.CompareTag("Player")) {
             _playerInRange = true;
             Vector3 target = other.transform.position - EnemyParentObject.position;
@@ -77,6 +94,7 @@ public class EnemyController : MonoBehaviour
         CurrentHealthPoints = Mathf.Clamp(CurrentHealthPoints, 0, MaxHealthPoints);
         if (CurrentHealthPoints == 0) {
             Animator.SetBool("Dead", true);
+            OnEnemyDeath?.Invoke(ExpAmount);
             InnerCollider.enabled = false;
             MyCollider.enabled = false;
             _dead = true;
